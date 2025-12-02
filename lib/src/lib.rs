@@ -1,3 +1,5 @@
+mod hour_minute;
+
 use std::time::{Duration, Instant};
 
 // struct ApplicationSettings {
@@ -42,13 +44,4 @@ struct User {
 
 struct Device {
 
-}
-
-#[cfg(test)]
-mod test {
-    use super::HourMinute;
-
-    fn test_hour_minute() {
-
-    }
 }
