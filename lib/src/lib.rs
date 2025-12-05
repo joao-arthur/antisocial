@@ -1,4 +1,5 @@
 mod hour_minute;
+mod day_hour_minute;
 
 use std::time::{Duration, Instant};
 
