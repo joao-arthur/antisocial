@@ -44,29 +44,31 @@ impl HourMinute {
     }
 }
 
-//impl Add for HourMinute {
-//    type Output = HourMinute;
-//
-//    fn add(self, rhs: Self) -> Self::Output {
-//        let total_self = self.hour * 60 + self.minute;
-//        let total_rhs = rhs.hour * 60 + rhs.minute;
-//        let total = total_self + total_rhs;
-//        let hour = total / 60;
-//        let minute = total - hour * 60;
-//        HourMinute { hour, minute }
-//    }
-//}
-//
-//impl Sub for HourMinute {
-//    type Output = HourMinute;
-//
-//    fn sub(self, rhs: Self) -> Self::Output {
-//        HourMinute {
-//            hour: 1,
-//            minute: 1
-//        }
-//    }
-//}
+impl Add for HourMinute {
+    type Output = HourMinute;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        let total_self = u16::from(self.hour) * 60 + u16::from(self.minute);
+        let total_rhs = u16::from(rhs.hour) * 60 + u16::from(rhs.minute);
+        let total = total_self + total_rhs;
+        let hour = total / 60;
+        let minute = total - hour * 60;
+        HourMinute { hour: hour as u8, minute: minute as u8 }
+    }
+}
+
+impl Sub for HourMinute {
+    type Output = HourMinute;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        let total_self = u16::from(self.hour) * 60 + u16::from(self.minute);
+        let total_rhs = u16::from(rhs.hour) * 60 + u16::from(rhs.minute);
+        let total = total_self - total_rhs;
+        let hour = total / 60;
+        let minute = total - hour * 60;
+        HourMinute { hour: hour as u8, minute: minute as u8 }
+    }
+}
  
 #[cfg(test)]
 mod test {
@@ -105,6 +107,7 @@ mod test {
         assert_eq!(HourMinute::new(3, 10).to_string(), "03:10");
         assert_eq!(HourMinute::new(12, 34).to_string(), "12:34");
         assert_eq!(HourMinute::new(18, 8).to_string(), "18:08");
+        assert_eq!(HourMinute::new(23, 59).to_string(), "23:59");
     }
 
     #[test]
@@ -127,5 +130,34 @@ mod test {
         assert_eq!(HourMinute::new(12, 34).fmt_ampm(), "00:34 P.M.");
         assert_eq!(HourMinute::new(18, 8).fmt_ampm(), "06:08 P.M.");
         assert_eq!(HourMinute::new(23, 59).fmt_ampm(), "11:59 P.M.");
+    }
+
+    #[test]
+    fn add() {
+        assert_eq!(HourMinute::new(0, 0) + HourMinute::new(0, 0), HourMinute::new(0, 0));
+        assert_eq!(HourMinute::new(1, 0) + HourMinute::new(0, 0), HourMinute::new(1, 0));
+        assert_eq!(HourMinute::new(0, 0) + HourMinute::new(0, 1), HourMinute::new(0, 1));
+        assert_eq!(HourMinute::new(1, 0) + HourMinute::new(0, 1), HourMinute::new(1, 1));
+        assert_eq!(HourMinute::new(8, 3) + HourMinute::new(2, 7), HourMinute::new(10, 10));
+        assert_eq!(HourMinute::new(8, 20) + HourMinute::new(1, 50), HourMinute::new(10, 10));
+        assert_eq!(HourMinute::new(8, 59) + HourMinute::new(1, 11), HourMinute::new(10, 10));
+        assert_eq!(HourMinute::new(8, 59) + HourMinute::new(0, 1), HourMinute::new(9, 0));
+        assert_eq!(HourMinute::new(11, 29) + HourMinute::new(12, 30), HourMinute::new(23, 59));
+        assert_eq!(HourMinute::new(0, 0) + HourMinute::new(23, 59), HourMinute::new(23, 59));
+        assert_eq!(HourMinute::new(23, 59) + HourMinute::new(0, 0), HourMinute::new(23, 59));
+    }
+
+    #[test]
+    fn sub() {
+        assert_eq!(HourMinute::new(0, 0) - HourMinute::new(0, 0), HourMinute::new(0, 0));
+        assert_eq!(HourMinute::new(1, 0) - HourMinute::new(0, 0), HourMinute::new(1, 0));
+        assert_eq!(HourMinute::new(1, 0) - HourMinute::new(1, 0), HourMinute::new(0, 0));
+        assert_eq!(HourMinute::new(0, 1) - HourMinute::new(0, 1), HourMinute::new(0, 0));
+        assert_eq!(HourMinute::new(10, 10) - HourMinute::new(2, 7), HourMinute::new(8, 3));
+        assert_eq!(HourMinute::new(10, 10) - HourMinute::new(1, 50), HourMinute::new(8, 20));
+        assert_eq!(HourMinute::new(10, 10) - HourMinute::new(1, 11), HourMinute::new(8, 59));
+        assert_eq!(HourMinute::new(9, 0) - HourMinute::new(0, 1), HourMinute::new(8, 59));
+        assert_eq!(HourMinute::new(23, 59) - HourMinute::new(11, 29), HourMinute::new(12, 30));
+        assert_eq!(HourMinute::new(23, 59) - HourMinute::new(23, 59), HourMinute::new(0, 0));
     }
 }
